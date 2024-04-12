@@ -5,7 +5,9 @@ Inspired by [this video](https://www.youtube.com/watch?v=TdTMeNXCnTs)
 Floyd-Steinburg Transformation written by ChatGPT
 
 ## Result
+
 <iframe width="952" height="536" src="https://www.youtube.com/embed/UJDuP1R9A4Y" title="Yea, Just Some Random Noise" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## How?
 
 It use **persistence of vision (POV)** effect (I guess)
