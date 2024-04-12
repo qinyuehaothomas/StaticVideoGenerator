@@ -4,9 +4,9 @@ If you pause the video, you see nothing, but if you play the video you see somet
 Inspired by [this video](https://www.youtube.com/watch?v=TdTMeNXCnTs)
 Floyd-Steinburg Transformation written by ChatGPT
 
-## Result
+## Result (Click to watch)
 
-<iframe width="952" height="536" src="https://www.youtube.com/embed/UJDuP1R9A4Y" title="Yea, Just Some Random Noise" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Thumbnail](https://img.youtube.com/vi/UJDuP1R9A4Y/maxresdefault.jpg)](https://www.youtube.com/embed/UJDuP1R9A4Y)
 
 ## How?
 
@@ -34,6 +34,7 @@ I want this type of detailed, but dunno the algrithm
 A better algrithm is **K mean clustering**
 Maybe in the future ill add a **image function**, can **hide a static image behind moving noise**.
 Another idea is use **ascii to do grayscale**, but tired....
+
 ## Requiste
 
 pip install opencv-python
