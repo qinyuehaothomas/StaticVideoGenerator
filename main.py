@@ -98,7 +98,7 @@ def boundary(image,stage=3):
             contour = np.array(contour, dtype=np.int32)
             contour = [tuple(l[::-1]) for l in contour.tolist()]
             draw.line(contour,width=1)
-            draw.polygon(contour, fill="red") if(i==int(255/stage)) else 0
+            draw.polygon(contour, fill="black") if(i==int(255/stage)) else 0
     
 
     return boundary_image
