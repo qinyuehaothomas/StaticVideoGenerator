@@ -1,4 +1,4 @@
-from PIL import Image,ImageEnhance
+from PIL import Image,ImageEnhance,ImageDraw
 import tkinter as tk
 from tkinter import filedialog
 import moviepy.editor
@@ -6,6 +6,11 @@ import os,random
 from tqdm import tqdm
 import imageio
 import numpy as np
+from skimage import measure
+from tkinter import messagebox
+
+
+
 def generate_noise(width, height):
     # Create a new black image
     noise_image = Image.new('L', (width, height))
@@ -56,12 +61,13 @@ def floyd_steinberg_dithering(img,prev): # CHATGPT!!!!!!!
 
     return img
 """
-def grayscale(img,prev):
+def custom_grayscale(img):
     fil=ImageEnhance.Contrast(img)
     img = fil.enhance(5).convert('1')
     # img=fil.enhance(10)
+    return img
 
-
+def POV(img,prev,BFlip=True):# black then flip
     # Get the dimensions of the image
     width, height = img.size
 
@@ -71,7 +77,7 @@ def grayscale(img,prev):
         for x in range(width):
             new_pixel = 255 if pix[x,y] > THRESHOLD else 0
             prev_pix=prev.getpixel((x,y))
-            if(new_pixel==255):# white change
+            if((new_pixel==255)==BFlip):# white change
                 pix[x,y]= 0 if prev_pix ==255 else 255
             else:
                 pix[x,y]=prev_pix
@@ -79,16 +85,38 @@ def grayscale(img,prev):
     return img.convert("L")
 
 
+def boundary(image,stage=3):
+    # Convert PIL Image to numpy array
+    image_array = np.array(image.convert("L"))
+
+    # Create a new blank image with the same size as the input image
+    boundary_image = Image.new("L", image.size, color=255)
+    draw = ImageDraw.Draw(boundary_image)
+    for i in range(int(255/stage),255,int(255/stage)):
+        contours =measure.find_contours(image_array,level=i)
+        for contour in contours:
+            contour = np.array(contour, dtype=np.int32)
+            contour = [tuple(l[::-1]) for l in contour.tolist()]
+            draw.line(contour,width=1)
+            draw.polygon(contour, fill="red") if(i==int(255/stage)) else 0
+    
+
+    return boundary_image
+
 
 # selectb input file
 
-file_path =r"D:\Projects\StaticVideoGenerator\StaticVideoGenerator\byebye.mp4"
+file_path = filedialog.askopenfilename()
 folder_name = os.path.dirname(file_path)
 
-# file_path = filedialog.askopenfilename()
-# folder_name = os.path.dirname(file_path)
-# print("Selected file:", file_path)
-# print("Folder:", folder_name)
+MODE="B"
+def func(s):
+    MODE=s
+    root.destroy()
+root=tk.Tk()
+tk.Button(root,text="Boundary",command=lambda:func("B")).pack()
+tk.Button(root,text="Grayscale",command=lambda:func("G")).pack()
+root.mainloop()
 
 
 VidFile = moviepy.editor.VideoFileClip(file_path)
@@ -99,18 +127,16 @@ THRESHOLD=128
 for frame in tqdm(VidFile.iter_frames(),desc="Loading video"):
     Vid.append(Image.fromarray(frame))
 
-# ImageEnhance.Contrast(Vid[10]).enhance(10).show()
-
-
-# Close the video clip
 VidFile.close()
 print("done loading")
 
 Vid.insert(0,generate_noise(w,h))
 for i in tqdm(range(1,len(Vid)),desc="Processing"):
-    # Vid[i]=floyd_steinberg_dithering(Vid[i],Vid[i-1])
-    Vid[i]=grayscale(Vid[i],Vid[i-1])
+    if(MODE=='G'):
+        Vid[i]=POV(custom_grayscale(Vid[i]),Vid[i-1],BFlip=True)
+    else:
+        Vid[i]=POV(boundary(Vid[i],stage=4),Vid[i-1],BFlip=False)
 
-with imageio.get_writer(os.path.join(folder_name,'TrumpMew.mp4'), fps=fps) as video:
+with imageio.get_writer(os.path.join(folder_name,'RickBoundary_.mp4'), fps=fps) as video:
     for i in tqdm(range(len(Vid)),desc="exporting"):
         video.append_data(np.array(Vid[i]))
